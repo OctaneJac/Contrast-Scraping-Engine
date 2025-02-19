@@ -1,2 +1,2 @@
-web: python app/app.py
-worker: celery -A tasks worker
+web: gunicorn -w 4 -b 0.0.0.0:5000 app.app:app
+worker: celery -A app.celery_app worker --loglevel=info

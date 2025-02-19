@@ -1,5 +1,6 @@
 from celery import Celery, Task
 from flask import Flask
+import os
 
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
@@ -17,8 +18,8 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_mapping(
         CELERY=dict(
-            broker_url="redis://default:FcBsDPGEgLGZarvkbJkUCtIEIzXZlZyM@redis.railway.internal:6379",
-            result_backend="redis://default:FcBsDPGEgLGZarvkbJkUCtIEIzXZlZyM@redis.railway.internal:6379",
+            broker_url=os.getenv("REDIS_URL", "redis://localhost:6379"), 
+            result_backend=os.getenv("REDIS_URL", "redis://localhost:6379"),
             task_ignore_result=True,
         ),
     )
