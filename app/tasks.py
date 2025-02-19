@@ -1,4 +1,4 @@
-from config import create_app 
+from app.config import create_app 
 from celery import shared_task 
 from time import sleep
 from celery import group
