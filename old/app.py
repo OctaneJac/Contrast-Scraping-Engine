@@ -1,4 +1,4 @@
-from app.tasks import flask_app, run_spider_task, migrate_data
+from old.oldtasks import flask_app, run_spider_task, migrate_data
 from celery.result import AsyncResult
 from flask import request,jsonify 
     
