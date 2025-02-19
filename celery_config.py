@@ -1,7 +1,6 @@
 from celery import Celery
 import os
 from dotenv import load_dotenv
-import tasks  # Import tasks module to register tasks
 
 load_dotenv()
 
@@ -16,6 +15,8 @@ celery_app.conf.task_routes = {
 celery_app.conf.update(
     result_expires=60,  # 1 minute
 )
+
+import tasks  # Import tasks module to register tasks
 
 # Check Redis connection
 with celery_app.connection() as connection:

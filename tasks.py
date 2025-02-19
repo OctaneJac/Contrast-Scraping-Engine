@@ -4,6 +4,7 @@ from celery_config import celery_app
 import time
 
 # for debugging purposes
+
 logger = get_task_logger(__name__)
 logger.setLevel(logging.INFO)  # Set logging level to INFO
 handler = logging.FileHandler('my_log.log')
@@ -13,6 +14,7 @@ logger.addHandler(handler)
 
 
 # the task itself
+
 @celery_app.task(name='tasks.apiworld')
 def apiworld():
     logger.info('Demo task started!')
