@@ -2,6 +2,8 @@ import logging
 from celery.utils.log import get_task_logger
 from celery_config import celery_app
 import time
+import asyncio
+from validation_scrapers.validation_scraper import run_store_validation
 
 # for debugging purposes
 logger = get_task_logger(__name__)
@@ -19,6 +21,7 @@ def apiworld():
     logger.info('Demo task completed!')
     return 'Demo task completed!'
 
+#Run main spiders
 @celery_app.task(name='tasks.run_scrapers')
 def run_scrapers():
     logger.info('Starting all scrapers...')
@@ -28,12 +31,22 @@ def run_scrapers():
     logger.info('All scrapers completed.')
     return "Scrapers Done"
 
-# Validation Scraper Task (Runs every midnight)
-@celery_app.task(name='tasks.run_validation_scrapers')
-def run_validation_scrapers():
-    logger.info('Starting validation scrapers...')
-    for site in ["site1.com", "site2.com", "site3.com"]:  # Replace with actual sites
-        logger.info(f"Validating {site}...")
-        time.sleep(2)
-    logger.info('Validation complete.')
-    return "Validation Done"
+# Validation Scraper Task (Runs every midnight, updates products)
+STORES = [
+    "Fitted Shop",
+    "Outfitters",
+    # Add all 20 stores here
+]
+
+@celery_app.task
+def validate_all_stores():
+    """Run validation scrapers for all stores in parallel"""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(run_all_validations())
+
+async def run_all_validations():
+    """Run each store's scraper concurrently using asyncio"""
+    tasks = [run_store_validation(store_name) for store_name in STORES]
+    print("Async running validation scrapers...")
+    await asyncio.gather(*tasks)  # Runs all store scrapers in parallel

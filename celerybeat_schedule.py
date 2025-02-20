@@ -1,16 +1,17 @@
 from celery.schedules import crontab
 from celery_config import celery_app
-from celery import chain
+#from celery import chain
 
 celery_app.conf.beat_schedule = {
-    'run_scrapers_debug': {
+    'run_scrapers': {
         'task': 'tasks.run_scrapers',
-        'schedule': 10.0,  # Run every 10 seconds for debugging
+        'schedule': crontab(hour=0, minute=0, day_of_week=0),  # Run every Sunday at midnight
         # 'options': {'queue': 'scraper_queue'},
     },
-    'run_validation_scrapers_debug': {
+    
+    'run_validation_scrapers': {
         'task': 'tasks.run_validation_scrapers',
-        'schedule': 10.0,  # Run every 10 seconds for debugging
+        'schedule': crontab(hour=0, minute=0),  # Run daily at midnight
         # 'options': {'queue': 'validation_queue'},
     },
 }

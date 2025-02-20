@@ -3,3 +3,4 @@ venv/
 celerybeat-schedule
 my_log.log
 __pycache__/
+old/
