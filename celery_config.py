@@ -9,7 +9,9 @@ celery_app.autodiscover_tasks(['tasks'])  # Adjust with the actual name of your 
 
 # Task routing
 celery_app.conf.task_routes = {
-    'tasks.apiworld': {'queue': 'cloud_queue'},  # Route 'tasks.apiworld' tasks to 'cloud_queue'
+    'tasks.run_scrapers': {'queue': 'scraper_queue'},
+    'tasks.run_validation_scrapers': {'queue': 'validation_queue'},
+    # 'tasks.data_migration': {'queue': 'migration_queue'},
 }
 
 celery_app.conf.update(

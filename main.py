@@ -8,7 +8,7 @@ celery_app.autodiscover_tasks(['tasks'], force=True)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    print('app is live')
 
 @app.route('/apiworld')
 def apiworld_route():
