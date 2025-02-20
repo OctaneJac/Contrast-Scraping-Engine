@@ -12,7 +12,7 @@ def apiworld_route():
     print('Task Launched!')
     return jsonify({"success": True, "task_id": task.id})
 
-@app.route('/check_task/<task_id>', methods=['GET'])
+@app.route('/chewck_task/<task_id>', methods=['GET'])
 def check_task(task_id):
     task = celery_app.AsyncResult(task_id)
     print(f"Task {task_id} is currently in state: {task.state}")  # Print the task state

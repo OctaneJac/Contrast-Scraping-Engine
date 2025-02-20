@@ -166,7 +166,10 @@ async def run_store_validation(store_name):
     await update_database(results)
 
 
+# ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+# DEBUG CODE
 #Validation Scraper Task (Runs every midnight, updates products)
+
 # STORES = [
 #     "Fitted Shop",
 #     "Outfitters",

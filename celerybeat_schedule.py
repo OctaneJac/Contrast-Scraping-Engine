@@ -4,7 +4,7 @@ from celery_config import celery_app
 
 celery_app.conf.beat_schedule = {
     'run_scrapers': {
-        'task': 'tasks.run_scrapers',
+        'task': 'tasks.run_all_scrapers',
         'schedule': crontab(hour=0, minute=0, day_of_week=0),  # Run every Sunday at midnight
         # 'options': {'queue': 'scraper_queue'},
     },

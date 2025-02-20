@@ -1,7 +1,7 @@
 import scrapy
 from urllib.parse import urljoin
 
-class AvantGardeSpider(scrapy.Spider):
+class avantgarde(scrapy.Spider):
     name = "avantgarde"
     allowed_domains = ["avantgardeoriginal.com"]
     start_urls = ["https://avantgardeoriginal.com/collections/all"]

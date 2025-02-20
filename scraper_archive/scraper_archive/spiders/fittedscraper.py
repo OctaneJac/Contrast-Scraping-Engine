@@ -1,7 +1,7 @@
 import scrapy
 from urllib.parse import urljoin
 
-class FittedShopSpider(scrapy.Spider):
+class fittedshop(scrapy.Spider):
     name = "fittedshop"
     allowed_domains = ["fittedshop.com"]
     start_urls = ["https://fittedshop.com/collections/all"]

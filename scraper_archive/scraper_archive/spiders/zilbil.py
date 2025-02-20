@@ -1,7 +1,7 @@
 import scrapy
 from urllib.parse import urljoin
 
-class ZilbilSpider(scrapy.Spider):
+class zilbil(scrapy.Spider):
     name = "zilbil"
     allowed_domains = ["zilbil.com"]
     start_urls = ["https://zilbil.com/collections/all"]
