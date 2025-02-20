@@ -10,6 +10,6 @@
       }
   },
   "deploy": {
-      "startCommand": "parallel --ungroup --halt now,fail=1 ::: 'celery -A celery_config worker --loglevel=info' 'celery -A celery_config beat --loglevel=info'"
+      "startCommand": "parallel --ungroup --halt now,fail=1 ::: 'celery -A celery_config worker --loglevel=info --concurrency=1' 'celery -A celery_config beat --loglevel=info'"
   }
 }
