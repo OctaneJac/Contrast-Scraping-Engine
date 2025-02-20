@@ -3,15 +3,15 @@ from celery_config import celery_app
 from celery import chain
 
 celery_app.conf.beat_schedule = {
-    'run_scrapers_every_sunday': {
+    'run_scrapers_debug': {
         'task': 'tasks.run_scrapers',
-        'schedule': crontab(minute=0, hour=0, day_of_week='sun'),  # Every Sunday at midnight
-        'options': {'queue': 'scraper_queue'},
+        'schedule': 10.0,  # Run every 10 seconds for debugging
+        # 'options': {'queue': 'scraper_queue'},
     },
-    'run_validation_scrapers_midnight': {
+    'run_validation_scrapers_debug': {
         'task': 'tasks.run_validation_scrapers',
-        'schedule': crontab(minute=0, hour=0),  # Every day at midnight
-        'options': {'queue': 'validation_queue'},
+        'schedule': 10.0,  # Run every 10 seconds for debugging
+        # 'options': {'queue': 'validation_queue'},
     },
 }
 

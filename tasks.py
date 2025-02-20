@@ -11,7 +11,7 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-# the task itself
+#Dummy Tasks
 @celery_app.task(name='tasks.apiworld')
 def apiworld():
     logger.info('Demo task started!')

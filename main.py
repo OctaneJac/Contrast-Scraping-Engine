@@ -6,10 +6,6 @@ app = Flask(__name__)
 from celery_config import celery_app
 celery_app.autodiscover_tasks(['tasks'], force=True)
 
-@app.route('/')
-def index():
-    print('app is live')
-
 @app.route('/apiworld')
 def apiworld_route():
     task = apiworld.delay()
