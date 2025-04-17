@@ -7,7 +7,6 @@ from validation_scrapers.validation_scraper import run_store_validation
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 import logging
-from old.spider_loader import get_all_spiders
 import subprocess
 
 # for debugging purposes

@@ -1,0 +1,9 @@
+[phases.setup]
+nixPkgs = ['...', 'parallel']
+
+[start]
+cmd = "parallel --ungroup --halt now,fail=1 ::: 'celery -A celery_config worker --loglevel=info --concurrency=2 -E' 'celery -A celery_config beat --loglevel=info'"
+
+[[providers]]
+name = "flower"
+cmd = "celery -A celery_config flower --persistent=True --db=${POSTGRES_URL} --port=5555"
