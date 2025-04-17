@@ -4,3 +4,5 @@ celerybeat-schedule
 my_log.log
 __pycache__/
 old/
+
+db credentials.txt

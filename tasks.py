@@ -7,7 +7,7 @@ from validation_scrapers.validation_scraper import run_store_validation
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 import logging
-from spider_loader import get_all_spiders
+from old.spider_loader import get_all_spiders
 import subprocess
 
 # for debugging purposes
@@ -17,14 +17,6 @@ handler = logging.FileHandler('my_log.log')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
-#Dummy Task
-@celery_app.task(name='tasks.apiworld')
-def apiworld():
-    logger.info('Demo task started!')
-    time.sleep(10)  # Simulate a task that takes 10 seconds to complete
-    logger.info('Demo task completed!')
-    return 'Demo task completed!'
 
 
 # Spiders ##########################
@@ -47,7 +39,7 @@ def run_spider(spider_name):
 @celery_app.task(name='tasks.run_all_scrapers', ignore_result=True)
 def run_all_scrapers():
     logger.info("Running all spiders...")
-    spiders = get_all_spiders()
+    spiders = ['avantgarde', 'zilbil','fittedshop']
     logger.info(f"Found spiders: {spiders}")
     for spider_name in spiders:
         run_spider.apply_async(args=[spider_name])

@@ -11,65 +11,77 @@ class avantgarde(scrapy.Spider):
         try:
             if not price_str:
                 return 0.0
-            price_str = price_str.replace('$', '').replace(',', '').strip()
+            price_str = price_str.replace('Rs.', '').replace(',', '').strip()
             return float(price_str)
         except ValueError:
             return 0.0
 
     def parse(self, response):
-        """Parse the collection page and navigate through pagination"""
-        products = response.css('div.card__content')
+        """Parse the collection page and extract product links"""
+        products = response.css('div.card-wrapper.product-card-wrapper')
+
         for product in products:
-            title_elem = product.css('h3.card__heading a::text')
-            title = title_elem.get().strip() if title_elem else None
+            link_elem = product.css('a.full-unstyled-link::attr(href)').get()
+            title_elem = product.css('a.full-unstyled-link::text').get()
 
-            product_url_elem = product.css('h3.card__heading a::attr(href)')
-            product_url = urljoin(response.url, product_url_elem.get()) if product_url_elem else None
+            if not link_elem:
+                continue
 
-            sale_price_elem = product.css('span.price--sale::text').get()
-            original_price_elem = product.css('span.price-item--regular::text').get()
+            title = title_elem.strip() if title_elem else None
+            product_url = urljoin(response.url, link_elem)
 
-            # If product is marked as Sold Out, set price to 0
+            # Price & Sold Out
+            sale_price = product.css('span.price-item--sale .money::text').get()
+            regular_price = product.css('span.price-item--regular .money::text').get()
+
             sold_out = product.css('div.card__badge span.badge::text').get()
-            if sold_out and "Sold out" in sold_out:
-                price = 0.0
-            else:
-                # Use sale price if available, otherwise use original price
-                price = self.clean_price(sale_price_elem) if sale_price_elem else self.clean_price(original_price_elem)
+            is_sold_out = sold_out and "Sold out" in sold_out
 
-            if product_url:
-                yield scrapy.Request(
-                    product_url,
-                    callback=self.parse_product,
-                    meta={'title': title, 'price': price, 'url': product_url},
-                )
+            price = 0.0 if is_sold_out else self.clean_price(sale_price or regular_price)
+            is_active = not is_sold_out
 
-        # Follow pagination
+            yield scrapy.Request(
+                url=product_url,
+                callback=self.parse_product,
+                meta={
+                    'title': title,
+                    'price': price,
+                    'url': product_url,
+                    'is_active': is_active
+                }
+            )
+
+        # Pagination
         next_page = response.css('a.pagination__next::attr(href)').get()
         if next_page:
             yield scrapy.Request(urljoin(response.url, next_page), callback=self.parse)
 
     def parse_product(self, response):
-        """Parse individual product pages"""
+        """Parse individual product page and collect all image URLs"""
         title = response.meta['title']
         price = response.meta['price']
         product_url = response.meta['url']
+        is_active = response.meta['is_active']
 
-        # Extract image URL
-        image_url = response.css('img::attr(srcset)').get()
-        if image_url:
-            # Get the highest resolution image by splitting srcset and taking the last one
-            image_url = image_url.split(",")[-1].split(" ")[0]
+        image_urls = response.css('product-modal img::attr(srcset)').getall()
 
-        # Ensure the image URL is complete
-        if image_url and image_url.startswith("//"):
-            image_url = "https:" + image_url
+        images = []
+        for srcset in image_urls:
+            try:
+                high_res = srcset.split(",")[-1].split(" ")[0].strip()
+                if high_res.startswith("//"):
+                    high_res = "https:" + high_res
+                images.append(high_res)
+            except IndexError:
+                continue
 
-        # Yield product data
+        images = list(set(images))
+
         yield {
             'name': title,
             'price': price,
-            'image': image_url,
+            'images': images,
             'url': product_url,
             'store': 'Avant Garde',
+            'is_active': is_active
         }
