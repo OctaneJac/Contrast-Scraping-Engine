@@ -4,7 +4,7 @@
     "nixpacksPlan": {
       "phases": {
         "setup": {
-          "nixPkgs": []
+          "nixPkgs": ["python3", "pip"]
         }
       }
     }
