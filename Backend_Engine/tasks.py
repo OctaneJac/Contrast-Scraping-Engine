@@ -70,7 +70,7 @@ def run_spider(self, spider_id):
             (
                 spider_id, spider_name, celery_trigger_time,
                 actual_start_time, end_time, duration,
-                self.request.retries, run_result.stdout[:10000]
+                self.request.retries, "success", run_result.stdout[:10000]
             )
         )
 
@@ -96,22 +96,22 @@ def run_spider(self, spider_id):
             """
             INSERT INTO spider_logs (
                 scraper_id, scraper_name, celery_trigger_time,
-                actual_start_time, end_time, duration_seconds, retries, error
+                actual_start_time, end_time, duration_seconds, retries, Terminal_Notes
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (   
                 spider_id, spider_name, celery_trigger_time,
                 actual_start_time, end_time, duration,
-                self.request.retries, e.stderr[:10000]
+                self.request.retries, "error", e.stderr[:10000]
             )
         )
 
         # Optional: mark scraper status as 'raising warnings' or 'broken' depending on retry count
         if self.request.retries >= self.max_retries:
-            new_status = 'broken'
+            new_status = 'Broken'
         else:
-            new_status = 'raising warnings'
+            new_status = 'Raising Warnings'
 
         cursor.execute(
             """
@@ -132,7 +132,7 @@ def run_spider(self, spider_id):
 @celery_app.task(name='tasks.run_all_scrapers', ignore_result=True)
 def run_all_scrapers():
     logger.info("Running all spiders...")
-    for spider_id in range(1,4):
+    for spider_id in range(1,4): #4 hardcoded here for now acc to no of scrapers written
         run_spider.apply_async(args=[spider_id])
     logger.info("All spiders have been queued for execution.")
 

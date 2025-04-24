@@ -124,7 +124,7 @@ export function ScraperHistoryTable({ data }: { data: ScraperHistoryItem[] }) {
           return (
             <Badge variant="outline" className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              Running
+              No data
             </Badge>
           )
         }
