@@ -1,8 +1,5 @@
 from celery import Celery
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 celery_app = Celery(
     'main',
@@ -24,6 +21,7 @@ celery_app.conf.update(
 
 import tasks  # Import tasks module to register tasks
 import celerybeat_schedule
+# from celerysignals import * 
 
 # Check Redis connection
 with celery_app.connection() as connection:
