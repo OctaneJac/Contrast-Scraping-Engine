@@ -41,7 +41,7 @@ interface ScraperRun {
 interface ScraperLibraryItem {
   id: string
   name: string
-  health: "healthy" | "warning" | "broken"
+  health: string
   lastRan: Date | null
   lastModified: Date
   description?: string
@@ -143,9 +143,9 @@ export function ScraperLibraryTable({ data }: { data: ScraperLibraryItem[] }) {
 
         if (health === "healthy") {
           return <Badge className="bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800">Healthy</Badge>
-        } else if (health === "warning") {
+        } else if (health === "Raising Warnings") {
           return (
-            <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800">Warning</Badge>
+            <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800">Raising Warnings</Badge>
           )
         } else {
           return <Badge variant="destructive">Broken</Badge>

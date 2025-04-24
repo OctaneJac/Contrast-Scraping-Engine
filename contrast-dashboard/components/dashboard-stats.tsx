@@ -1,7 +1,7 @@
-import { TrendingUpIcon } from "lucide-react"
+// import { TrendingUpIcon } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 
-import { Badge } from "@/components/ui/badge"
+// import { Badge } from "@/components/ui/badge"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface DashboardStatsProps {

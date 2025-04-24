@@ -1,11 +1,19 @@
 // lib/getScraperLibrary.ts
 import pool from "./db";
 
+interface ScraperRow {
+  id: number;
+  name: string;
+  status: string;
+  last_modified: Date;
+  last_ran: Date ;
+}
+
 export async function getScraperLibrary() {
   const client = await pool.connect();
 
   try {
-    const result = await client.query(`
+    const result = await client.query<ScraperRow>(`
       SELECT 
         id,
         name,
@@ -14,9 +22,9 @@ export async function getScraperLibrary() {
         last_ran
       FROM listofscrapers
       ORDER BY last_ran DESC
-    `);
+    `) as { rows: ScraperRow[] };
 
-    return result.rows.map((row: any) => ({
+    return result.rows.map((row) => ({
       id: row.id.toString(),
       name: row.name,
       health: row.status,
@@ -27,19 +35,3 @@ export async function getScraperLibrary() {
     client.release();
   }
 }
-
-// // Map database status to UI health badge
-// function mapStatusToHealth(status: string) {
-//   switch (status.toLowerCase()) {
-//     case "running":
-//     case "healthy":
-//       return "healthy";
-//     case "warning":
-//     case "degraded":
-//       return "warning";
-//     case "offline":
-//     case "error":
-//     default:
-//       return "error";
-//   }
-// }
