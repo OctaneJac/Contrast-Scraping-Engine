@@ -1,20 +1,40 @@
+"use client"
 import { AppSidebar } from "@/components/app-sidebar"
 import { DashboardStats } from "@/components/dashboard-stats"
 import { ScraperHistoryTable } from "@/components/scraper-history-table"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { getScrapingStats } from "@/lib/getScrapingStats";
-import { getScrapingHistory } from "@/lib/getScrapingHistory";
+// import { getScrapingStats } from "@/lib/getScrapingStats";
+// import { getScrapingHistory } from "@/lib/getScrapingHistory";
+import { useEffect, useState } from "react"
 
-export default async function Page() {
-  // In a real application, you would fetch this data from the database
-  // const stats = await getScrapingStats();
-  // const scraperHistory = await getScraperHistory();
 
-  // For preview, use the dummy data
-  const stats = await getScrapingStats();
-  const scraperHistory = await getScrapingHistory();
+interface Stats {
+  lastScraped: Date
+  lastPriceUpdate: Date
+  totalProducts: number
+  activeProducts: number
+}
 
+export default function Page() {
+  const [stats, setStats] = useState<Stats>({
+    lastScraped: new Date(),
+    lastPriceUpdate: new Date(),
+    totalProducts: 0,
+    activeProducts: 0,
+  })
+  const [scraperHistory, setScraperHistory] = useState([])
+
+  useEffect(() => {
+    fetch("/api/scraperstats")
+      .then(res => res.json())
+      .then(data => setStats(data))
+
+    fetch("/api/scraperhistory")
+      .then(res => res.json())
+      .then(setScraperHistory)
+  }, [])
+  
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" />
