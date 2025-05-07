@@ -1,6 +1,6 @@
 import logging
 from celery.utils.log import get_task_logger
-from Backend_Engine.celery_config import celery_app
+from celery_config import celery_app
 import time
 import asyncio
 # from tasks.validation_scraper import run_store_validation
@@ -9,7 +9,6 @@ from scrapy.utils.project import get_project_settings
 import logging
 import subprocess
 from datetime import datetime, timedelta
-
 
 # for debugging purposes
 logger = get_task_logger(__name__)
@@ -63,9 +62,9 @@ def run_spider(self, spider_id):
             """
             INSERT INTO spider_logs (
                 scraper_id, scraper_name, celery_trigger_time,
-                actual_start_time, end_time, duration_seconds, retries, result
+                actual_start_time, end_time, duration_seconds, retries, result, terminal_notes
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s)
             """,
             (
                 spider_id, spider_name, celery_trigger_time,
@@ -96,7 +95,7 @@ def run_spider(self, spider_id):
             """
             INSERT INTO spider_logs (
                 scraper_id, scraper_name, celery_trigger_time,
-                actual_start_time, end_time, duration_seconds, retries, Terminal_Notes
+                actual_start_time, end_time, duration_seconds, retries, result, Terminal_Notes
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
@@ -116,10 +115,10 @@ def run_spider(self, spider_id):
         cursor.execute(
             """
             UPDATE listofscrapers
-            SET status = %s, 
+            SET status = %s 
             WHERE id = %s
             """,
-            (new_status, end_time, spider_id,)
+            (new_status, spider_id,)
         )
 
         conn.commit()
@@ -132,10 +131,11 @@ def run_spider(self, spider_id):
 @celery_app.task(name='tasks.run_all_scrapers', ignore_result=True)
 def run_all_scrapers():
     logger.info("Running all spiders...")
-    for spider_id in range(1,4): #4 hardcoded here for now acc to no of scrapers written
+    for spider_id in range(1,8): #8 hardcoded here for now acc to no of scrapers written
         run_spider.apply_async(args=[spider_id])
     logger.info("All spiders have been queued for execution.")
 
+# NOTE: Vlaidation scraper has been added at id 8, we need a seperate structure to track validation scrapers and then fix the hardcoded value above
 
 #/////////////////////////////////////////////////////////////////////////
 # Validation Scraper Task (Runs every midnight, updates products)
@@ -158,6 +158,20 @@ async def run_all_validations():
     print("Async running validation scrapers...")
     await asyncio.gather(*tasks)  # Runs all store scrapers in parallel
 
-
+@celery_app.task(name='tasks.run_migrations', ignore_result=True)
+def run_migrations():
+    """Run the migrate.py script."""
+    try:
+        logger.info("Starting migrations...")
+        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "migrate2.py")
+        result = subprocess.run(
+            ["python", script_path],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        logger.info(f"Migrations completed successfully: {result.stdout}")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Migration failed: {e.stderr}")
 
 
