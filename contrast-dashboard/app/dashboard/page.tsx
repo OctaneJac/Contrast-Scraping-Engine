@@ -11,7 +11,7 @@ import { useEffect, useState } from "react"
 
 interface Stats {
   lastScraped: Date
-  lastPriceUpdate: Date
+  totalScrapes: number
   totalProducts: number
   activeProducts: number
 }
@@ -19,7 +19,7 @@ interface Stats {
 export default function Page() {
   const [stats, setStats] = useState<Stats>({
     lastScraped: new Date(),
-    lastPriceUpdate: new Date(),
+    totalScrapes: 0,
     totalProducts: 0,
     activeProducts: 0,
   })
@@ -45,7 +45,7 @@ export default function Page() {
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <DashboardStats
                 lastScraped={stats.lastScraped}
-                lastPriceUpdate={stats.lastPriceUpdate}
+                totalScrapes={stats.totalScrapes}
                 totalProducts={stats.totalProducts}
                 activeProducts={stats.activeProducts}
               />

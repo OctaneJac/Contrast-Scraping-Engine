@@ -9,7 +9,7 @@ export async function getScrapingStats() {
       totalProducts: 0,
       activeProducts: 0,
       lastScraped: null,
-      lastPriceUpdate: null,
+      totalScrapes: 0,
     };
 
     const productCounts = await client.query(`
@@ -28,13 +28,11 @@ export async function getScrapingStats() {
     `);
     stats.lastScraped = lastScrapedResult.rows[0].last_scraped;
 
-    // Assuming latest price update correlates with spider end time
-    const lastPriceUpdateResult = await client.query(`
-      SELECT MAX(end_time) AS last_price_update
+    const totalScrapesResult = await client.query(`
+      SELECT COUNT(*) AS total_scrapes
       FROM spider_logs
-      WHERE scraper_name ILIKE '%validation%' AND result = 'success'
     `);
-    stats.lastPriceUpdate = lastPriceUpdateResult.rows[0].last_price_update;
+    stats.totalScrapes = parseInt(totalScrapesResult.rows[0].total_scrapes);
 
     return stats;
   } finally {

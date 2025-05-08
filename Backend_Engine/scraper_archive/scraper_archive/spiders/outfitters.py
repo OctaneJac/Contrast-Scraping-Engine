@@ -18,6 +18,12 @@ class OutfittersSpider(scrapy.Spider):
 
     def parse(self, response):
         page = response.meta.get('page', 1)
+        
+        # Stop crawling after page 30
+        if page > 30:
+            self.logger.info(f'Reached page limit of 30. Stopping pagination.')
+            return
+
         self.logger.info(f'Scraping page {page}: {response.url}')
         
         # Extract product cards

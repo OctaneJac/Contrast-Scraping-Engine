@@ -135,7 +135,6 @@ def run_all_scrapers():
         run_spider.apply_async(args=[spider_id])
     logger.info("All spiders have been queued for execution.")
 
-# NOTE: Vlaidation scraper has been added at id 8, we need a seperate structure to track validation scrapers and then fix the hardcoded value above
 
 #/////////////////////////////////////////////////////////////////////////
 # Validation Scraper Task (Runs every midnight, updates products)
@@ -158,6 +157,8 @@ async def run_all_validations():
     print("Async running validation scrapers...")
     await asyncio.gather(*tasks)  # Runs all store scrapers in parallel
 
+
+#////////////////////// Migration Task ////////////////////////
 @celery_app.task(name='tasks.run_migrations', ignore_result=True)
 def run_migrations():
     """Run the migrate.py script."""

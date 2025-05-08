@@ -6,12 +6,12 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/comp
 
 interface DashboardStatsProps {
   lastScraped: Date | null
-  lastPriceUpdate: Date | null
+  totalScrapes: number
   totalProducts: number
   activeProducts: number
 }
 
-export function DashboardStats({ lastScraped, lastPriceUpdate, totalProducts, activeProducts }: DashboardStatsProps) {
+export function DashboardStats({ lastScraped, totalScrapes, totalProducts, activeProducts }: DashboardStatsProps) {
   // Format the dates as "X time ago" (e.g., "2 hours ago")
   const formatTimeAgo = (date: Date | null) => {
     if (!date) return "Never"
@@ -40,9 +40,9 @@ export function DashboardStats({ lastScraped, lastPriceUpdate, totalProducts, ac
 
       <Card className="@container/card">
         <CardHeader className="relative">
-          <CardDescription>Last Price Update</CardDescription>
+          <CardDescription>Total Scrapes</CardDescription>
           <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold">
-            {formatTimeAgo(lastPriceUpdate)}
+            {totalScrapes.toLocaleString()}
           </CardTitle>
           <div className="absolute right-4 top-4">
             {/* <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
@@ -53,9 +53,9 @@ export function DashboardStats({ lastScraped, lastPriceUpdate, totalProducts, ac
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1 text-sm">
           <div className="line-clamp-1 font-medium">
-            {lastPriceUpdate ? new Date(lastPriceUpdate).toLocaleString() : "No data available"}
+            Scrapes performed in last 30 days
           </div>
-          {/* <div className="text-muted-foreground">Last price validation date</div> */}
+          {/* <div className="text-muted-foreground">Total number of scrapes</div> */}
         </CardFooter>
       </Card>
 
